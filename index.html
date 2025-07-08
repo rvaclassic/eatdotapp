@@ -5,58 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eat. - Meal Planner, Cook & Shopping List</title>
     
-    <!-- Updated Favicon: Centered and more visible -->
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Pacifico, cursive' font-size='32' fill='%2322c55e'%3EEat.%3C/text%3E%3C/svg%3E">
     
-    <!-- Apple Touch Icon (for mobile home screens) with white background -->
+    <!-- Apple Touch Icon -->
     <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='white'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Pacifico, cursive' font-size='40' fill='%2322c55e'%3EEat.%3C/text%3E%3C/svg%3E">
 
-    <!-- Tailwind CSS for styling -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- React Libraries -->
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
-    <!-- Babel to transpile JSX in the browser -->
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- Google Fonts for the 'Pacifico' font used in the logo -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Firebase SDKs (must be before the Babel script) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
     <style>
-        /* A little extra style to make sure the custom font is applied */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
         .font-pacifico {
             font-family: 'Pacifico', cursive;
         }
-        /* Style for drag-and-drop */
+        /* Drag and Drop Styles */
         .dragging {
-            opacity: 0.5;
-            border: 2px dashed #22c55e;
+            opacity: 0.4;
             transform: scale(0.95);
+            background-color: #f3f4f6;
         }
-        .drag-over {
-            transform: scale(1.05);
-            background-color: #d1fae5; /* A light green background */
+        .drag-over-slot {
+            transform: scale(1.02);
+            background-color: #d1fae5 !important; /* Use important to override other bg colors */
+            outline: 2px dashed #10b981;
+            outline-offset: -2px;
         }
     </style>
 </head>
 <body class="bg-gray-50">
 
-    <!-- This is the root element where the React app will be mounted -->
     <div id="root"></div>
 
-    <!-- The script type MUST be "text/babel" for Babel to transpile it -->
     <script type="text/babel">
-        // All of your React code goes here
-        
+        /**
+         * @file meal_planner_app.js
+         * @description The main script for the EatDotApp meal planning application.
+         *
+         * © 2024 EatDotApp Inc. All Rights Reserved.
+         *
+         * This code is the exclusive property of EatDotApp Inc. and is protected by copyright law.
+         * Unauthorized copying, modification, distribution, or use of this code, in whole or in part,
+         * is strictly prohibited without the express written permission of EatDotApp Inc.
+         */
+
         // --- Firebase Configuration ---
         const firebaseConfig = {
           apiKey: "AIzaSyAlx6CQR67n8-8T5lA5lCx_T12P3A_oiPk",
@@ -67,7 +78,7 @@
           appId: "1:1018973605412:web:3486638bae22704b2a12b1"
         };
 
-        // --- Initialize Firebase (v8 compat syntax) ---
+        // --- Initialize Firebase ---
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
@@ -80,11 +91,21 @@
         const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 mr-2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
         const ShoppingCartIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 mr-2"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.16"/></svg>;
         const XIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
-        const HeartIcon = ({ filled }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-6 w-6 ${filled ? 'text-red-500' : 'text-gray-400'}`}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>;
+        const MiniXIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
+        const HeartIcon = ({ filled, className }) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill={filled ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${className} ${filled ? 'text-red-500' : 'text-gray-400'}`}><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>;
         const PlusCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>;
         const TrashIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>;
+        const FilterIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>;
 
-        // --- Recipe Data (1750 Recipes) ---
+        // --- Smart Tag Grouping for Filters ---
+        const tagGroups = {
+            "Cuisine": ["American", "Asian", "Brazilian", "French", "Greek", "Indian", "Italian", "Jamaican", "Japanese", "Mexican", "Oriental", "Thai"],
+            "Meal Type": ["Breakfast", "Lunch", "Dinner", "Snack", "Dessert", "Soup", "Salad"],
+            "Dietary": ["Vegan", "Vegetarian", "Gluten-Free", "Dairy-Free", "Low-Carb", "High-Carb", "High-Protein", "High-Calorie", "Balanced"],
+            "Cooking Style": ["Quick-Meals", "Meal-Prep", "Easy-To-Cook", "Baking", "Spicy", "Seafood"]
+        };
+        
+        // --- Recipe Data ---
         const allRecipes = [
             // Quick-Meals (50)
             { id: 1, name: 'Instant Ramen with Egg', calories: 450, protein: 12, carbs: 60, fat: 18, tags: ['Quick-Meals', 'Easy-To-Cook', 'Asian'], ingredients: [{ name: 'Instant Ramen', quantity: 1, unit: 'packet', category: 'Pantry' }, { name: 'Egg', quantity: 1, unit: 'pc', category: 'Dairy & Eggs' }], instructions: ["Bring 2 cups of water to a boil.", "Add noodles and cook for 2-3 minutes.", "Stir in seasoning.", "Gently crack an egg into the soup and cook for 1-2 more minutes."] },
@@ -137,6 +158,7 @@
             { id: 48, name: 'Chicken Nuggets', calories: 350, protein: 20, carbs: 20, fat: 20, tags: ['Quick-Meals', 'Easy-To-Cook', 'American'], ingredients: [{ name: 'Frozen Chicken Nuggets', quantity: 6, unit: 'pcs', category: 'Frozen' }], instructions: ["Bake, air-fry, or microwave according to package directions."] },
             { id: 49, name: 'Garlic Bread', calories: 250, protein: 6, carbs: 30, fat: 12, tags: ['Quick-Meals', 'Vegetarian', 'Snack'], ingredients: [{ name: 'Baguette', quantity: 1, unit: 'pc', category: 'Bakery' }, { name: 'Butter', quantity: 2, unit: 'tbsp', category: 'Dairy & Eggs' }, { name: 'Garlic Powder', quantity: 1, unit: 'tsp', category: 'Pantry' }], instructions: ["Slice baguette.", "Mix softened butter with garlic powder.", "Spread on bread and broil until golden."] },
             { id: 50, name: 'Simple Shrimp Scampi', calories: 450, protein: 25, carbs: 45, fat: 15, tags: ['Quick-Meals', 'Seafood', 'Dinner'], ingredients: [{ name: 'Shrimp', quantity: 150, unit: 'g', category: 'Seafood' }, { name: 'Pasta', quantity: 100, unit: 'g', category: 'Pantry' }, { name: 'Garlic', quantity: 2, unit: 'cloves', category: 'Produce' }, { name: 'Butter', quantity: 2, unit: 'tbsp', category: 'Dairy & Eggs' }], instructions: ["Cook pasta.", "Sauté garlic in butter, add shrimp and cook until pink.", "Toss with pasta."] },
+            // ... (The rest of the 1750 recipes would be here, following the same structure and sequential IDs)
             // Meal-Prep (50)
             { id: 51, name: 'Sheet Pan Chicken & Veggies', calories: 450, protein: 40, carbs: 25, fat: 20, tags: ['Meal-Prep', 'Gluten-Free', 'High Protein', 'Dinner'], ingredients: [{ name: 'Chicken Breast', quantity: 4, unit: 'pcs', category: 'Meat' }, { name: 'Broccoli', quantity: 2, unit: 'heads', category: 'Produce' }, { name: 'Bell Peppers', quantity: 2, unit: 'pcs', category: 'Produce' }], instructions: ["Chop chicken and veggies.", "Toss with olive oil and seasonings on a baking sheet.", "Roast at 200°C (400°F) for 20-25 minutes.", "Portion into containers."] },
             { id: 52, name: 'Overnight Oats', calories: 350, protein: 15, carbs: 50, fat: 10, tags: ['Meal-Prep', 'Vegetarian', 'Gluten-Free', 'Breakfast'], ingredients: [{ name: 'Rolled Oats', quantity: 0.5, unit: 'cup', category: 'Pantry' }, { name: 'Yogurt', quantity: 0.5, unit: 'cup', category: 'Dairy & Eggs' }, { name: 'Milk', quantity: 0.5, unit: 'cup', category: 'Dairy & Eggs' }], instructions: ["Combine ingredients in a jar.", "Stir well and refrigerate overnight."] },
@@ -4036,7 +4058,7 @@
                 { name: "Pie Dough", quantity: 2, unit: "pcs", category: "Bakery" },
                 { name: "Shredded Chicken", quantity: 2, unit: "cups", category: "Meat" },
                 { name: "Smoked Sausage (Linguiça)", quantity: 0.5, unit: "cup", category: "Meat" },
-                { name: "Olives", quantity: 0.5, unit: "cup", "Pantry" },
+                { name: "Olives", quantity: 0.5, unit: "cup", category: "Pantry" },
                 { name: "Hearts of Palm", quantity: 1, unit: "can", category: "Pantry" },
                 { name: "Hard-Boiled Eggs", quantity: 2, unit: "pcs", category: "Dairy & Eggs" }
             ],
@@ -7115,7 +7137,7 @@
                 { name: "Canned Tart Cherries", quantity: 2, unit: "cans", category: "Pantry" },
                 { name: "Sugar", quantity: 1, unit: "cup", category: "Pantry" },
                 { name: "Cornstarch", quantity: 0.25, unit: "cup", category: "Pantry" },
-                { name: "Almond Extract", quantity: 0.25, "tsp", category: "Pantry" }
+                { name: "Almond Extract", quantity: 0.25, unit: "tsp", category: "Pantry" }
             ],
             instructions: ["Preheat oven to 400°F (200°C).", "Line a pie plate with one crust.", "In a saucepan, combine cherries, sugar, and cornstarch. Cook until thickened.", "Stir in almond extract. Pour filling into the crust.", "Top with a lattice crust.", "Bake for 40-50 minutes."]
             },
@@ -16359,7 +16381,7 @@
                 { name: "Bread", quantity: 2, unit: "slices", category: "Bakery" }
             ],
             instructions: ["Peel and chop the hard-boiled eggs.", "In a bowl, mix the chopped eggs with mayonnaise, Dijon mustard, and sliced green onion.", "Season with salt and pepper.", "Serve between two slices of bread with lettuce."]
-            }
+            },
             // ... More recipes to fill out the 50 total for this category ...
             {
             id: 1150,
@@ -17555,11 +17577,6 @@
             ],
             instructions: ["Butter the outside of each slice of bread.", "On the unbuttered side of one slice, spread a thin layer of pesto.", "Layer with slices of fresh mozzarella, tomato, and fresh basil leaves.", "Top with the other slice of bread, butter-side out.", "Grill in a skillet over medium-low heat until the bread is golden brown and the cheese is melted."]
             }
-            
-
-
-
-            // ... (The rest of the 1750 recipes would be here, following the same structure and sequential IDs)
         ];
 
 
@@ -17568,13 +17585,12 @@
             const [user, setUser] = React.useState(null);
             const [loading, setLoading] = React.useState(true);
 
-            // --- Authentication Listener ---
             React.useEffect(() => {
                 const unsubscribe = auth.onAuthStateChanged((user) => {
                     setUser(user);
                     setLoading(false);
                 });
-                return () => unsubscribe(); // Cleanup on unmount
+                return () => unsubscribe();
             }, []);
 
             if (loading) {
@@ -17594,6 +17610,7 @@
             const [email, setEmail] = React.useState('');
             const [password, setPassword] = React.useState('');
             const [error, setError] = React.useState('');
+            const [showLegalModal, setShowLegalModal] = React.useState(false);
 
             const handleAuthAction = async (e) => {
                 e.preventDefault();
@@ -17610,10 +17627,10 @@
             };
 
             return (
-                <div className="container mx-auto p-4 flex justify-center items-center h-screen">
+                <div className="container mx-auto p-4 flex flex-col justify-center items-center h-screen">
                     <div className="w-full max-w-sm">
                         <header className="text-center mb-10">
-                            <h1 className="text-7xl tracking-tighter font-pacifico" style={{color: '#22c55e'}}>Eat.</h1>
+                            <h1 className="text-7xl tracking-tighter font-pacifico text-green-500">Eat.</h1>
                             <p className="text-gray-500 mt-2">Plan your meals, simplify your life.</p>
                         </header>
                         <form onSubmit={handleAuthAction} className="bg-white shadow-xl shadow-green-500/20 rounded-2xl px-8 pt-6 pb-8 mb-4">
@@ -17637,19 +17654,20 @@
                             </div>
                         </form>
                     </div>
+                    <Footer onShowLegal={() => setShowLegalModal(true)} />
+                    {showLegalModal && <LegalModal onClose={() => setShowLegalModal(false)} />}
                 </div>
             );
         }
 
-
         // --- Main Application after Login ---
         function MealApp({ user }) {
-            const [mealPlan, setMealPlan] = React.useState({});
+            const [mealPlan, setMealPlan] = React.useState(null); // Start as null to indicate not yet loaded
             const [shoppingList, setShoppingList] = React.useState([]);
             const [favorites, setFavorites] = React.useState([]);
             const [activeTab, setActiveTab] = React.useState(() => localStorage.getItem('activeTab') || 'planner');
             const [firestoreError, setFirestoreError] = React.useState(null);
-            const [planLoaded, setPlanLoaded] = React.useState(false);
+            const [showLegalModal, setShowLegalModal] = React.useState(false);
             
             const handleSetTab = (tabName) => {
                 localStorage.setItem('activeTab', tabName);
@@ -17662,41 +17680,23 @@
 
                 const handleError = (error) => {
                     console.error("Firestore Error:", error);
-                    if (error.code === 'permission-denied') {
-                        setFirestoreError(
-                            <span>
-                                <strong>Permission Denied.</strong> Your Firestore security rules are preventing access. For this app to work, you need rules that allow users to read and write their own data. Go to your Firebase project's Firestore security rules and set them to something like:
-                                <pre className="bg-gray-100 p-2 rounded-md text-xs mt-2 overflow-auto">
-                                    {`rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /users/{userId}/{document=**} {\n      allow read, write: if request.auth != null && request.auth.uid == userId;\n    }\n  }\n}`}
-                                </pre>
-                            </span>
-                        );
-                    } else if (error.code === 'not-found' || error.code === 'failed-precondition') {
-                         setFirestoreError(
-                            <span>
-                                <strong>Database Not Found or Not Indexed:</strong> The Firestore database for this project has not been created or indexed. 
-                                Please visit{' '}
-                                <a 
-                                    href={`https://console.firebase.google.com/project/${firebaseConfig.projectId}/firestore`}
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:underline"
-                                >
-                                    your Firebase console to create a Firestore database
-                                </a>
-                                , then refresh this page.
-                            </span>
-                        );
-                    } else {
-                        setFirestoreError("Connection Error: Could not load data. Please check your internet connection and try again.");
-                    }
+                    setFirestoreError("There was an error connecting to the database. Please check your security rules and internet connection.");
                 };
 
                 const unsubPlan = db.collection("users").doc(user.uid).collection("data").doc("mealPlan").onSnapshot(
                     (doc) => { 
                         setFirestoreError(null); 
-                        setMealPlan(doc.exists ? doc.data() : {});
-                        setPlanLoaded(true); // Mark plan as loaded
+                        const docData = doc.exists ? doc.data() : {};
+                        const planFromDb = JSON.parse(JSON.stringify(docData));
+
+                        Object.keys(planFromDb).forEach(day => {
+                            Object.keys(planFromDb[day]).forEach(mealType => {
+                                if (!Array.isArray(planFromDb[day][mealType])) {
+                                    planFromDb[day][mealType] = planFromDb[day][mealType] ? [planFromDb[day][mealType]] : [];
+                                }
+                            });
+                        });
+                        setMealPlan(planFromDb);
                     },
                     handleError
                 );
@@ -17712,53 +17712,70 @@
                 return () => { unsubPlan(); unsubList(); unsubFavorites(); };
             }, [user.uid]);
 
-            // --- Update Shopping List when Meal Plan Changes ---
+            // This useEffect now handles all shopping list synchronization.
+            // It runs whenever the meal plan changes, ensuring the list is always accurate.
             React.useEffect(() => {
-                if (!user || firestoreError || !planLoaded) return;
-                
-                const updateShoppingListFromPlan = async () => {
-                    const plannedRecipes = Object.values(mealPlan).flatMap(day => Object.values(day || {})).filter(Boolean);
-                    const plannedIngredients = plannedRecipes.flatMap(recipeId => {
+                // Do not run if the meal plan hasn't been loaded from Firestore yet.
+                if (mealPlan === null) return;
+
+                const syncShoppingList = async () => {
+                    const listCollectionRef = db.collection("users").doc(user.uid).collection("shoppingList");
+    
+                    const plannedRecipeIds = Object.values(mealPlan).flatMap(day => Object.values(day || {}).flat()).filter(Boolean);
+                    const plannedIngredients = plannedRecipeIds.flatMap(recipeId => {
                         const recipe = allRecipes.find(r => r.id === recipeId);
                         return recipe ? recipe.ingredients : [];
                     });
-
-                    const aggregatedList = plannedIngredients.reduce((acc, item) => {
-                        const key = `${item.name.toLowerCase().trim()}-${item.unit.toLowerCase().trim()}`;
-                        if (!acc[key]) {
-                            acc[key] = { ...item, quantity: 0, fromRecipe: true, purchased: false };
+    
+                    const requiredItemsMap = new Map();
+                    plannedIngredients.forEach(item => {
+                        const key = `${item.name.toLowerCase().trim()}-${item.unit.toLowerCase().trim()}`.replace(/[^a-zA-Z0-9-]/g, '_');
+                        if (requiredItemsMap.has(key)) {
+                            requiredItemsMap.get(key).quantity += item.quantity;
+                        } else {
+                            requiredItemsMap.set(key, {
+                                name: item.name,
+                                quantity: item.quantity,
+                                unit: item.unit,
+                                category: item.category || 'Miscellaneous',
+                                fromRecipe: true,
+                                purchased: false
+                            });
                         }
-                        acc[key].quantity += item.quantity;
-                        return acc;
-                    }, {});
-
+                    });
+    
                     try {
-                        const listCollectionRef = db.collection("users").doc(user.uid).collection("shoppingList");
+                        const shoppingListSnapshot = await listCollectionRef.get();
+                        const allExistingItems = new Map();
+                        shoppingListSnapshot.forEach(doc => {
+                            allExistingItems.set(doc.id, { id: doc.id, ...doc.data() });
+                        });
+    
                         const batch = db.batch();
-                        const recipeItemsQuery = listCollectionRef.where("fromRecipe", "==", true);
-                        const snapshot = await recipeItemsQuery.get();
-                        snapshot.forEach(doc => {
-                            batch.delete(doc.ref);
-                        });
-                        Object.values(aggregatedList).forEach(item => {
-                            const docId = `${item.name.toLowerCase().trim()}-${item.unit.toLowerCase().trim()}`.replace(/[^a-zA-Z0-9-]/g, '_');
-                            const docRef = listCollectionRef.doc(docId);
-                            batch.set(docRef, item);
-                        });
+    
+                        for (const [key, newItemData] of requiredItemsMap.entries()) {
+                            const existingItem = allExistingItems.get(key);
+                            const docRef = listCollectionRef.doc(key);
+                            if (existingItem) {
+                                newItemData.purchased = existingItem.purchased || false;
+                            }
+                            batch.set(docRef, newItemData);
+                        }
+    
+                        for (const [key, existingItem] of allExistingItems.entries()) {
+                            if (existingItem.fromRecipe && !requiredItemsMap.has(key)) {
+                                batch.delete(listCollectionRef.doc(key));
+                            }
+                        }
                         await batch.commit();
                     } catch (e) {
-                        console.error("Error updating shopping list:", e);
+                        console.error("Sync failure:", e);
+                        setFirestoreError("Could not update shopping list.");
                     }
                 };
 
-                updateShoppingListFromPlan();
-            }, [mealPlan, user.uid, firestoreError, planLoaded]);
-
-            const updateMealPlan = async (newPlan) => {
-                if (!user) return;
-                const planRef = db.collection("users").doc(user.uid).collection("data").doc("mealPlan");
-                await planRef.set(newPlan);
-            };
+                syncShoppingList();
+            }, [mealPlan, user.uid]);
 
             const handleLogout = () => {
                 localStorage.removeItem('activeTab');
@@ -17775,40 +17792,50 @@
                 </button>
             );
 
+            // Show a loading indicator until the meal plan is loaded for the first time
+            if (mealPlan === null) {
+                return <div className="flex justify-center items-center h-screen bg-gray-50"><p>Loading Your Meal Plan...</p></div>;
+            }
+
             return (
-                <div className="container mx-auto p-2 sm:p-6 lg:p-8">
-                    <header className="flex justify-between items-center mb-6 sm:mb-10">
-                        <div className="w-24"></div>
-                        <div className="text-center">
-                            <button onClick={() => handleSetTab('planner')} className="focus:outline-none group">
-                                <h1 className="text-5xl sm:text-7xl tracking-tighter font-pacifico text-green-500 group-hover:text-green-600 transition-colors">Eat.</h1>
-                            </button>
-                            <p className="text-gray-500 mt-2 text-xs sm:text-base px-4">Your one-stop solution for meal planning, cooking and grocery shopping.</p>
-                        </div>
-                        <div className="w-24 flex justify-end">
-                            <button onClick={handleLogout} className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors">Logout</button>
-                        </div>
-                    </header>
-                    
-                    {firestoreError && (
-                        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6" role="alert">
-                            <div className="text-sm">{firestoreError}</div>
-                        </div>
-                    )}
+                <div className="flex flex-col min-h-screen">
+                    <div className="flex-grow container mx-auto p-2 sm:p-6 lg:p-8">
+                        <header className="flex justify-between items-center mb-6 sm:mb-10">
+                            <div className="w-24"></div>
+                            <div className="text-center">
+                                <button onClick={() => handleSetTab('planner')} className="focus:outline-none group">
+                                    <h1 className="text-5xl sm:text-7xl tracking-tighter font-pacifico text-green-500 group-hover:text-green-600 transition-colors">Eat.</h1>
+                                </button>
+                                <p className="text-gray-500 mt-2 text-xs sm:text-base px-4">Your one-stop solution for meal planning, cooking and grocery shopping.</p>
+                            </div>
+                            <div className="w-24 flex justify-end">
+                                <button onClick={handleLogout} className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors">Logout</button>
+                            </div>
+                        </header>
+                        
+                        {firestoreError && (
+                            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg mb-6" role="alert">
+                                <p className="font-bold">Database Error</p>
+                                <div className="text-sm">{firestoreError}</div>
+                            </div>
+                        )}
 
-                    <div className="mb-8 p-1.5 bg-white/60 backdrop-blur-sm rounded-full shadow-inner flex justify-around sm:justify-center sm:space-x-2 max-w-xs sm:max-w-lg mx-auto">
-                        <TabButton tabName="planner" icon={<CalendarIcon />} label="Planner" />
-                        <TabButton tabName="cook" icon={<UtensilsIcon />} label="Cook" />
-                        <TabButton tabName="recipes" icon={<BookOpenIcon />} label="Recipes" />
-                        <TabButton tabName="shopping" icon={<ShoppingCartIcon />} label="Shopping List" />
+                        <div className="mb-8 p-1.5 bg-white/60 backdrop-blur-sm rounded-full shadow-inner flex justify-around sm:justify-center sm:space-x-2 max-w-xs sm:max-w-lg mx-auto">
+                            <TabButton tabName="planner" icon={<CalendarIcon />} label="Planner" />
+                            <TabButton tabName="cook" icon={<UtensilsIcon />} label="Cook" />
+                            <TabButton tabName="recipes" icon={<BookOpenIcon />} label="Recipes" />
+                            <TabButton tabName="shopping" icon={<ShoppingCartIcon />} label="Shopping List" />
+                        </div>
+
+                        <main>
+                            {activeTab === 'planner' && <MealPlanner mealPlan={mealPlan} userId={user.uid} />}
+                            {activeTab === 'cook' && <Cook mealPlan={mealPlan} />}
+                            {activeTab === 'recipes' && <RecipeList userId={user.uid} favorites={favorites} mealPlan={mealPlan} />}
+                            {activeTab === 'shopping' && <ShoppingList userId={user.uid} shoppingList={shoppingList} />}
+                        </main>
                     </div>
-
-                    <main>
-                        {activeTab === 'planner' && <MealPlanner userId={user.uid} mealPlan={mealPlan} updateMealPlan={updateMealPlan} />}
-                        {activeTab === 'cook' && <Cook mealPlan={mealPlan} />}
-                        {activeTab === 'recipes' && <RecipeList userId={user.uid} favorites={favorites} onUpdatePlan={updateMealPlan} mealPlan={mealPlan} />}
-                        {activeTab === 'shopping' && <ShoppingList userId={user.uid} shoppingList={shoppingList} />}
-                    </main>
+                    <Footer onShowLegal={() => setShowLegalModal(true)} />
+                    {showLegalModal && <LegalModal onClose={() => setShowLegalModal(false)} />}
                 </div>
             );
         }
@@ -17823,71 +17850,118 @@
             </div>
         );
 
-        // --- Meal Planner ---
-        function MealPlanner({ userId, mealPlan, updateMealPlan }) {
+        // --- Meal Planner with Drag & Drop ---
+        function MealPlanner({ mealPlan, userId }) {
             const [showConfirmModal, setShowConfirmModal] = React.useState(false);
-            const [draggedItem, setDraggedItem] = React.useState(null);
-            const [dragOverSlot, setDragOverSlot] = React.useState(null);
             const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
             const mealTypes = ["Breakfast", "Lunch", "Dinner"];
+            const get = (obj, path, def) => path.split('.').reduce((o, p) => (o && o[p] !== undefined) ? o[p] : def, obj);
 
-            const handleDragStart = (e, day, mealType, recipeId) => {
-                setDraggedItem({ day, mealType, recipeId });
-                e.dataTransfer.effectAllowed = 'move';
-                e.currentTarget.classList.add('dragging');
+            const addMeal = async (day, mealType, recipeId) => {
+                const planRef = db.collection("users").doc(userId).collection("data").doc("mealPlan");
+                const fieldPath = `${day}.${mealType}`;
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(planRef);
+                        const currentPlan = doc.data() || {};
+                        const currentMeals = get(currentPlan, fieldPath, []);
+                        if (currentMeals.length < 4) {
+                            const newMeals = [...currentMeals, recipeId];
+                            transaction.set(planRef, { [day]: { ...(currentPlan[day] || {}), [mealType]: newMeals } }, { merge: true });
+                        }
+                    });
+                } catch (e) { console.error("Add meal transaction failed:", e); }
             };
 
-            const handleDragOver = (e, day, mealType) => {
-                e.preventDefault();
-                setDragOverSlot({ day, mealType });
-            };
-
-            const handleDragLeave = () => {
-                setDragOverSlot(null);
-            };
-            
-            const handleDragEnd = (e) => {
-                e.currentTarget.classList.remove('dragging');
-                setDraggedItem(null);
-                setDragOverSlot(null);
-            };
-
-            const handleDrop = async (e, targetDay, targetMealType) => {
-                e.preventDefault();
-                if (!draggedItem) return;
-
-                const { day: sourceDay, mealType: sourceMealType, recipeId: sourceRecipeId } = draggedItem;
-                
-                if (sourceDay === targetDay && sourceMealType === targetMealType) {
-                    setDragOverSlot(null);
-                    return;
-                }
-
-                const newPlan = JSON.parse(JSON.stringify(mealPlan));
-                const targetRecipeId = newPlan[targetDay]?.[targetMealType] || null;
-                if (!newPlan[targetDay]) newPlan[targetDay] = {};
-                newPlan[targetDay][targetMealType] = sourceRecipeId;
-                if (!newPlan[sourceDay]) newPlan[sourceDay] = {};
-                newPlan[sourceDay][sourceMealType] = targetRecipeId;
-
-                await updateMealPlan(newPlan);
-                setDragOverSlot(null);
-            };
-
-            const updateMeal = (day, mealType, recipeId) => {
-                const newPlan = JSON.parse(JSON.stringify(mealPlan));
-                if (!newPlan[day]) newPlan[day] = {};
-                newPlan[day][mealType] = recipeId;
-                updateMealPlan(newPlan);
-            };
-
-            const removeMeal = (day, mealType) => {
-                updateMeal(day, mealType, null);
+            const removeMeal = async (day, mealType, recipeId, indexToRemove) => {
+                const planRef = db.collection("users").doc(userId).collection("data").doc("mealPlan");
+                const fieldPath = `${day}.${mealType}`;
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(planRef);
+                        if (!doc.exists) return;
+                        const currentPlan = doc.data();
+                        const currentMeals = get(currentPlan, fieldPath, []);
+                        if (currentMeals[indexToRemove] === recipeId) {
+                            const newMeals = currentMeals.filter((_, index) => index !== indexToRemove);
+                            transaction.set(planRef, { [day]: { ...(currentPlan[day] || {}), [mealType]: newMeals } }, { merge: true });
+                        }
+                    });
+                } catch (e) { console.error("Remove meal transaction failed:", e); }
             };
 
             const handleClearWeek = async () => {
                 setShowConfirmModal(false);
-                await updateMealPlan({});
+                const planRef = db.collection("users").doc(userId).collection("data").doc("mealPlan");
+                await planRef.set({});
+            };
+            
+            const handleDragStart = (e, recipeId, sourceDay, sourceMealType, sourceIndex) => {
+                const dragData = { recipeId, sourceDay, sourceMealType, sourceIndex };
+                e.dataTransfer.setData("application/json", JSON.stringify(dragData));
+                e.currentTarget.classList.add('dragging');
+            };
+
+            const handleDragEnd = (e) => {
+                e.currentTarget.classList.remove('dragging');
+            };
+
+            const handleDragOver = (e) => {
+                e.preventDefault();
+            };
+
+            const handleDragEnter = (e) => {
+                e.preventDefault();
+                e.currentTarget.classList.add('drag-over-slot');
+            };
+
+            const handleDragLeave = (e) => {
+                e.currentTarget.classList.remove('drag-over-slot');
+            };
+
+            const handleDrop = async (e, targetDay, targetMealType) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('drag-over-slot');
+                const jsonData = e.dataTransfer.getData("application/json");
+                if (!jsonData) return;
+                const { recipeId, sourceDay, sourceMealType, sourceIndex } = JSON.parse(jsonData);
+
+                if (sourceDay === targetDay && sourceMealType === targetMealType) return;
+
+                const planRef = db.collection("users").doc(userId).collection("data").doc("mealPlan");
+
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(planRef);
+                        const currentPlan = doc.data() || {};
+                        const sourceMeals = get(currentPlan, `${sourceDay}.${sourceMealType}`, []);
+                        const targetMeals = get(currentPlan, `${targetDay}.${targetMealType}`, []);
+
+                        if (targetMeals.length >= 4 || sourceMeals[sourceIndex] !== recipeId) {
+                            return; 
+                        }
+
+                        const [movedRecipe] = sourceMeals.splice(sourceIndex, 1);
+                        targetMeals.push(movedRecipe);
+                        
+                        const updatePayload = {};
+                        if (sourceDay === targetDay) {
+                            // [THE FIX] When moving within the same day, create a single update object for that day
+                            // that includes the changes to BOTH the source and target meal slots.
+                            updatePayload[sourceDay] = {
+                                ...(currentPlan[sourceDay] || {}),
+                                [sourceMealType]: sourceMeals,
+                                [targetMealType]: targetMeals
+                            };
+                        } else {
+                            // When moving between different days, create separate update objects for each day.
+                            updatePayload[sourceDay] = { ...(currentPlan[sourceDay] || {}), [sourceMealType]: sourceMeals };
+                            updatePayload[targetDay] = { ...(currentPlan[targetDay] || {}), [targetMealType]: targetMeals };
+                        }
+                        
+                        transaction.set(planRef, updatePayload, { merge: true });
+                    });
+                } catch (e) { console.error("Drag-drop transaction failed:", e); }
             };
 
             return (
@@ -17912,31 +17986,43 @@
                             <BentoCard key={day} className="flex flex-col space-y-4">
                                 <h3 className="font-bold text-lg text-center text-gray-800">{day}</h3>
                                 {mealTypes.map(mealType => {
-                                    const recipeId = mealPlan[day]?.[mealType];
-                                    const recipe = recipeId ? allRecipes.find(r => r.id === recipeId) : null;
-                                    const isDragOver = dragOverSlot?.day === day && dragOverSlot?.mealType === mealType;
+                                    const recipeIds = mealPlan[day]?.[mealType] || [];
+                                    const isFull = recipeIds.length >= 4;
+                                    
                                     return (
-                                        <div 
-                                            key={mealType}
-                                            onDragOver={(e) => handleDragOver(e, day, mealType)}
-                                            onDrop={(e) => handleDrop(e, day, mealType)}
-                                            onDragLeave={handleDragLeave}
-                                            className={`p-1 rounded-lg border border-transparent transition-all ${isDragOver ? 'drag-over' : ''}`}
-                                        >
+                                        <div key={mealType} className="p-1 rounded-lg">
                                             <h4 className="font-semibold text-sm text-gray-600 mb-1">{mealType}</h4>
-                                            {recipe ? (
-                                                <div 
-                                                    className="bg-green-50 p-2 rounded-lg text-center cursor-move relative group"
-                                                    draggable
-                                                    onDragStart={(e) => handleDragStart(e, day, mealType, recipe.id)}
-                                                    onDragEnd={handleDragEnd}
-                                                >
-                                                    <p className="font-semibold text-green-800 text-sm">{recipe.name}</p>
-                                                    <button onClick={() => removeMeal(day, mealType)} className="absolute top-0 right-0 mt-1 mr-1 text-xs text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity"><XIcon /></button>
-                                                </div>
-                                            ) : (
-                                                <MealSlot onSelectRecipe={(selectedRecipe) => updateMeal(day, mealType, selectedRecipe.id)} />
-                                            )}
+                                            <div 
+                                                className={`p-2 rounded-lg min-h-[6rem] space-y-1 transition-colors relative ${isFull ? 'bg-red-50' : 'bg-gray-50'}`}
+                                                onDrop={(e) => handleDrop(e, day, mealType)}
+                                                onDragOver={handleDragOver}
+                                                onDragEnter={handleDragEnter}
+                                                onDragLeave={handleDragLeave}
+                                            >
+                                                {recipeIds.map((recipeId, index) => {
+                                                    const recipe = allRecipes.find(r => r.id === recipeId);
+                                                    if (!recipe) return null;
+                                                    return (
+                                                        <div 
+                                                            key={`${recipe.id}-${index}`} 
+                                                            className="bg-green-100 p-1.5 rounded-md text-center relative group cursor-move"
+                                                            draggable="true"
+                                                            onDragStart={(e) => handleDragStart(e, recipe.id, day, mealType, index)}
+                                                            onDragEnd={handleDragEnd}
+                                                        >
+                                                            <p className="font-semibold text-green-800 text-xs truncate">{recipe.name}</p>
+                                                            <button onClick={() => removeMeal(day, mealType, recipe.id, index)} className="absolute top-0 right-0 mt-0.5 mr-0.5 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })}
+                                                {isFull ? (
+                                                    <div className="text-center text-red-500 text-xs font-semibold py-2">Meal Full</div>
+                                                ) : (
+                                                    <MealSlot onSelectRecipe={(selectedRecipe) => addMeal(day, mealType, selectedRecipe.id)} />
+                                                )}
+                                            </div>
                                         </div>
                                     );
                                 })}
@@ -17952,21 +18038,23 @@
             const [searchTerm, setSearchTerm] = React.useState('');
 
             const filteredRecipes = React.useMemo(() => {
-                if (!searchTerm) return allRecipes.slice(0, 50);
+                if (!searchTerm) return allRecipes; // Show all recipes
                 return allRecipes.filter(r => r.name.toLowerCase().includes(searchTerm.toLowerCase()));
             }, [searchTerm]);
 
             return (
                 <div className="relative flex justify-center">
-                    <button onClick={() => setIsOpen(!isOpen)} className="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-full hover:bg-gray-300 transition-colors duration-200 text-sm w-full">+ Add Meal</button>
+                    <button onClick={() => setIsOpen(!isOpen)} className="w-full text-center text-gray-400 hover:text-green-500 transition-colors py-1">
+                         <PlusCircleIcon className="h-5 w-5 mx-auto"/>
+                    </button>
                     {isOpen && (
                         <div className="absolute z-30 bottom-full mb-2 w-64 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
                             <input 
                                 type="text" 
-                                placeholder="Search..."
+                                placeholder="Search recipes..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full p-2 border-b text-sm"
+                                className="w-full p-2 border-b text-sm focus:ring-green-500"
                             />
                             <ul className="py-1 max-h-60 overflow-y-auto">
                                 {filteredRecipes.map(recipe => (
@@ -17989,15 +18077,14 @@
                 const mealTypesOrder = ["Breakfast", "Lunch", "Dinner"];
 
                 const meals = Object.entries(mealPlan).flatMap(([day, meals]) =>
-                    Object.entries(meals || {})
-                        .filter(([, recipeId]) => recipeId)
-                        .map(([mealType, recipeId]) => {
+                    Object.entries(meals || {}).flatMap(([mealType, recipeIds]) =>
+                        (recipeIds || []).map(recipeId => {
                             const recipe = allRecipes.find(r => r.id === recipeId);
                             if (!recipe) return null;
                             return { day, mealType, ...recipe };
                         })
-                        .filter(Boolean) 
-                );
+                    )
+                ).filter(Boolean);
 
                 meals.sort((a, b) => {
                     const dayIndexA = daysOrder.indexOf(a.day);
@@ -18026,8 +18113,8 @@
                     <div className="mt-8 max-w-5xl mx-auto">
                         {plannedMeals.length > 0 ? (
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {plannedMeals.map((meal) => (
-                                    <BentoCard key={`${meal.id}-${meal.day}-${meal.mealType}`} onClick={() => setSelectedRecipe(meal)} className="cursor-pointer flex flex-col justify-between text-left p-5">
+                                {plannedMeals.map((meal, index) => (
+                                    <BentoCard key={`${meal.id}-${index}`} onClick={() => setSelectedRecipe(meal)} className="cursor-pointer flex flex-col justify-between text-left p-5">
                                         <div>
                                             <p className="text-xs font-semibold uppercase tracking-wider text-green-500">{meal.day} {meal.mealType}</p>
                                             <h3 className="text-xl font-bold text-gray-800 mt-1">{meal.name}</h3>
@@ -18103,28 +18190,14 @@
             );
         }
 
-
-        // --- Recipe List Tab ---
-        function RecipeList({ userId, favorites, onUpdatePlan, mealPlan }) {
+        // --- Recipe List Tab with New Filters and Sorting ---
+        function RecipeList({ userId, favorites, mealPlan }) {
             const [searchTerm, setSearchTerm] = React.useState('');
-            const [sortType, setSortType] = React.useState('default');
-            const [filters, setFilters] = React.useState([]);
+            const [activeFilters, setActiveFilters] = React.useState([]);
+            const [sortOption, setSortOption] = React.useState('name_asc');
             const [showFavorites, setShowFavorites] = React.useState(false);
             const [planningRecipe, setPlanningRecipe] = React.useState(null);
-
-            const allTags = React.useMemo(() => {
-                const tags = new Set();
-                allRecipes.forEach(recipe => {
-                    if(recipe.tags) {
-                       recipe.tags.forEach(tag => tags.add(tag));
-                    }
-                });
-                return Array.from(tags).sort();
-            }, []);
-
-            const handleFilterChange = (filter) => {
-                setFilters(prev => prev.includes(filter) ? prev.filter(f => f !== filter) : [...prev, filter]);
-            };
+            const [showFilterModal, setShowFilterModal] = React.useState(false);
 
             const toggleFavorite = async (recipeId) => {
                 const favRef = db.collection("users").doc(userId).collection("favorites").doc(recipeId.toString());
@@ -18135,80 +18208,96 @@
                 }
             };
 
+            const toggleFilter = (filter) => {
+                setActiveFilters(prev => 
+                    prev.includes(filter) 
+                        ? prev.filter(f => f !== filter) 
+                        : [...prev, filter]
+                );
+            };
+
             const filteredAndSortedRecipes = React.useMemo(() => {
                 let processedRecipes = [...allRecipes];
 
+                // 1. Filter by Favorites
                 if (showFavorites) {
                     processedRecipes = processedRecipes.filter(recipe => favorites.includes(recipe.id.toString()));
                 }
 
-                if (filters.length > 0) {
-                    processedRecipes = processedRecipes.filter(recipe => 
-                        filters.every(filter => recipe.tags && recipe.tags.includes(filter))
-                    );
-                }
-                
+                // 2. Filter by Search Term
                 if (searchTerm) {
+                    const lowerCaseSearch = searchTerm.toLowerCase();
                     processedRecipes = processedRecipes.filter(recipe =>
-                        recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        (recipe.ingredients && recipe.ingredients.some(ing => ing.name.toLowerCase().includes(searchTerm.toLowerCase())))
+                        recipe.name.toLowerCase().includes(lowerCaseSearch) ||
+                        (recipe.ingredients && recipe.ingredients.some(ing => ing.name.toLowerCase().includes(lowerCaseSearch))) ||
+                        (recipe.tags && recipe.tags.some(tag => tag.toLowerCase().includes(lowerCaseSearch)))
                     );
                 }
 
-                if (sortType.startsWith('tag-')) {
-                    const sortTag = sortType.replace('tag-', '');
-                    processedRecipes.sort((a, b) => ((b.tags && b.tags.includes(sortTag)) ? 1 : 0) - ((a.tags && a.tags.includes(sortTag)) ? 1 : 0));
-                } else {
-                    switch (sortType) {
-                        case 'name-az': processedRecipes.sort((a, b) => a.name.localeCompare(b.name)); break;
-                        case 'name-za': processedRecipes.sort((a, b) => b.name.localeCompare(a.name)); break;
-                        case 'calories-low': processedRecipes.sort((a, b) => a.calories - b.calories); break;
-                        case 'calories-high': processedRecipes.sort((a, b) => b.calories - a.calories); break;
-                        case 'protein-high': processedRecipes.sort((a, b) => b.protein - a.protein); break;
-                        default: break;
-                    }
+                // 3. Filter by Active Tags
+                if (activeFilters.length > 0) {
+                    processedRecipes = processedRecipes.filter(recipe => 
+                        activeFilters.every(filter => recipe.tags.includes(filter))
+                    );
                 }
+
+                // 4. Sort
+                const [sortBy, direction] = sortOption.split('_');
+                processedRecipes.sort((a, b) => {
+                    if (sortBy === 'name') {
+                        return direction === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+                    }
+                    if (sortBy === 'calories') {
+                        return direction === 'asc' ? a.calories - b.calories : b.calories - a.calories;
+                    }
+                    if (sortBy === 'protein') {
+                        return direction === 'asc' ? a.protein - b.protein : b.protein - a.protein;
+                    }
+                    return 0;
+                });
 
                 return processedRecipes;
-            }, [sortType, filters, searchTerm, showFavorites, favorites]);
-
+            }, [searchTerm, activeFilters, sortOption, showFavorites, favorites]);
+            
             return (
                 <div>
-                    {planningRecipe && <AddToPlanModal recipe={planningRecipe} onUpdatePlan={onUpdatePlan} onClose={() => setPlanningRecipe(null)} mealPlan={mealPlan} />}
+                    {planningRecipe && <AddToPlanModal recipe={planningRecipe} onClose={() => setPlanningRecipe(null)} mealPlan={mealPlan} userId={userId} />}
+                    {showFilterModal && <FilterModal activeFilters={activeFilters} toggleFilter={toggleFilter} onClose={() => setShowFilterModal(false)} />}
+
                     <div className="mb-6 bg-white p-4 rounded-2xl shadow-md space-y-4">
-                        <div className="flex flex-col sm:flex-row gap-4 items-center">
-                            <input type="text" placeholder="Search by recipe or ingredient..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full sm:flex-grow p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"/>
-                            <select onChange={(e) => setSortType(e.target.value)} value={sortType} className="w-full sm:w-auto p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500">
-                                <option value="default">Sort by...</option>
-                                <optgroup label="General">
-                                    <option value="name-az">Name (A-Z)</option>
-                                    <option value="name-za">Name (Z-A)</option>
-                                </optgroup>
-                                <optgroup label="Nutrition">
-                                    <option value="calories-low">Calories: Lowest</option>
-                                    <option value="calories-high">Calories: Highest</option>
-                                    <option value="protein-high">Protein: Highest</option>
-                                </optgroup>
-                                <optgroup label="Tags">
-                                    {allTags.map(tag => <option key={tag} value={`tag-${tag}`}>{tag}</option>)}
-                                </optgroup>
-                            </select>
-                             <label className="flex items-center space-x-2 cursor-pointer whitespace-nowrap">
-                                <input type="checkbox" checked={showFavorites} onChange={() => setShowFavorites(!showFavorites)} className="h-5 w-5 rounded text-green-600 focus:ring-green-500 border-gray-300 accent-green-500"/>
-                                <span className="text-sm font-semibold text-gray-700">Favorites Only</span>
-                            </label>
-                        </div>
-                        <details>
-                            <summary className="cursor-pointer text-sm font-semibold text-green-600">Filter by Tags</summary>
-                            <div className="flex flex-wrap gap-x-4 gap-y-2 mt-2 pt-2 border-t">
-                                {allTags.map(filter => (
-                                    <label key={filter} className="flex items-center space-x-2 cursor-pointer">
-                                        <input type="checkbox" checked={filters.includes(filter)} onChange={() => handleFilterChange(filter)} className="h-4 w-4 rounded text-green-600 focus:ring-green-500 border-gray-300 accent-green-500" />
-                                        <span className="text-sm text-gray-700">{filter}</span>
-                                    </label>
-                                ))}
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <input type="text" placeholder="Search recipes, ingredients, or tags..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full sm:flex-grow p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"/>
+                            <div className="flex items-center gap-2">
+                                <button onClick={() => setShowFilterModal(true)} className="flex-grow sm:flex-grow-0 flex items-center justify-center gap-2 p-2 w-full border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors">
+                                    <FilterIcon />
+                                    <span>Filter</span>
+                                    {activeFilters.length > 0 && <span className="bg-green-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{activeFilters.length}</span>}
+                                </button>
+                                <button 
+                                    onClick={() => setShowFavorites(!showFavorites)} 
+                                    className={`p-2 border rounded-lg transition-colors ${showFavorites ? 'bg-red-100 border-red-200 text-red-600' : 'bg-white border-gray-300 text-gray-600 hover:bg-red-50'}`}
+                                    title="Filter by Favorites"
+                                >
+                                    <HeartIcon filled={showFavorites} className="h-5 w-5" />
+                                </button>
                             </div>
-                        </details>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <label htmlFor="sort-select" className="font-semibold text-sm text-gray-600">Sort by:</label>
+                            <select 
+                                id="sort-select"
+                                onChange={(e) => setSortOption(e.target.value)} 
+                                value={sortOption} 
+                                className="flex-grow p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 bg-white"
+                            >
+                                <option value="name_asc">Name (A-Z)</option>
+                                <option value="name_desc">Name (Z-A)</option>
+                                <option value="calories_asc">Calories (Low to High)</option>
+                                <option value="calories_desc">Calories (High to Low)</option>
+                                <option value="protein_asc">Protein (Low to High)</option>
+                                <option value="protein_desc">Protein (High to Low)</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -18218,19 +18307,23 @@
                                     <h3 className="font-bold text-lg text-gray-800 mb-1 pr-2 flex-grow">{recipe.name}</h3>
                                     <div className="flex items-center flex-shrink-0">
                                         <button onClick={() => setPlanningRecipe(recipe)} className="text-gray-400 hover:text-green-500 mr-2"><PlusCircleIcon /></button>
-                                        <button onClick={() => toggleFavorite(recipe.id)}><HeartIcon filled={favorites.includes(recipe.id.toString())} /></button>
+                                        <button onClick={() => toggleFavorite(recipe.id)}><HeartIcon filled={favorites.includes(recipe.id.toString())} className="h-6 w-6" /></button>
                                     </div>
                                 </div>
-                                <p className="text-sm font-medium text-green-600 mb-2">~{recipe.calories} cal</p>
-                                <div className="flex flex-wrap gap-1 mb-3">
-                                    {recipe.tags && recipe.tags.slice(0,3).map(tag => <span key={tag} className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">{tag}</span>)}
-                                </div>
-                                <div className="flex-grow">
-                                     <p className="text-green-700 font-semibold mb-2 text-sm">Ingredients:</p>
-                                    <ul className="space-y-1 text-xs text-gray-700">
-                                        {recipe.ingredients && recipe.ingredients.slice(0, 4).map(ing => <li key={ing.name}>{ing.name}</li>)}
-                                        {recipe.ingredients && recipe.ingredients.length > 4 && <li className="text-gray-400">...and more</li>}
-                                    </ul>
+                                <p className="text-sm font-medium text-green-600 mb-2">~{recipe.calories} cal / {recipe.protein}g protein</p>
+                                <div className="flex-grow mt-2 space-y-2">
+                                    <div className="flex flex-wrap gap-1">
+                                        {recipe.tags.slice(0, 4).map(tag => (
+                                            <span key={tag} className="bg-gray-200 text-gray-700 text-xs font-semibold px-2 py-0.5 rounded-full">{tag}</span>
+                                        ))}
+                                    </div>
+                                    <div>
+                                        <p className="text-green-700 font-semibold text-xs mb-1">Ingredients:</p>
+                                        <ul className="space-y-1 text-xs text-gray-700">
+                                            {recipe.ingredients && recipe.ingredients.slice(0, 3).map(ing => <li key={ing.name} className="truncate">{ing.name}</li>)}
+                                            {recipe.ingredients && recipe.ingredients.length > 3 && <li className="text-gray-400">...and more</li>}
+                                        </ul>
+                                    </div>
                                 </div>
                             </BentoCard>
                         ))}
@@ -18239,68 +18332,149 @@
             );
         }
 
-        function AddToPlanModal({ recipe, onUpdatePlan, onClose, mealPlan }) {
-            const [localPlan, setLocalPlan] = React.useState(mealPlan);
-            const [draggedItem, setDraggedItem] = React.useState(null);
-            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-            const mealTypes = ["Breakfast", "Lunch", "Dinner"];
-
-            const handleSelect = (day, mealType) => {
-                const newPlan = JSON.parse(JSON.stringify(localPlan));
-                if (!newPlan[day]) newPlan[day] = {};
-                newPlan[day][mealType] = recipe.id;
-                setLocalPlan(newPlan);
-                onUpdatePlan(newPlan); // Update live
-            };
-            
-            const handleRemove = (day, mealType) => {
-                const newPlan = JSON.parse(JSON.stringify(localPlan));
-                if (newPlan[day]) {
-                    newPlan[day][mealType] = null;
-                }
-                setLocalPlan(newPlan);
-                onUpdatePlan(newPlan); // Update live
-            };
-            
-            const handleDragStart = (e, day, mealType, recipeId) => {
-                setDraggedItem({ day, mealType, recipeId });
-                 e.dataTransfer.effectAllowed = 'move';
-            };
-
-            const handleDragOver = (e) => {
-                e.preventDefault();
-            };
-            
-            const handleDrop = (e, targetDay, targetMealType) => {
-                e.preventDefault();
-                if (!draggedItem) return;
-
-                const { day: sourceDay, mealType: sourceMealType, recipeId: sourceRecipeId } = draggedItem;
-                
-                if (sourceDay === targetDay && sourceMealType === targetMealType) return;
-
-                const newPlan = JSON.parse(JSON.stringify(localPlan));
-                const targetRecipeId = newPlan[targetDay]?.[targetMealType] || null;
-                
-                if (!newPlan[targetDay]) newPlan[targetDay] = {};
-                newPlan[targetDay][targetMealType] = sourceRecipeId;
-
-                if (!newPlan[sourceDay]) newPlan[sourceDay] = {};
-                newPlan[sourceDay][sourceMealType] = targetRecipeId;
-
-                setLocalPlan(newPlan);
-                onUpdatePlan(newPlan);
-                setDraggedItem(null);
-            };
-
-
+        // --- Filter Modal Component ---
+        function FilterModal({ activeFilters, toggleFilter, onClose }) {
             return (
                 <Modal onClose={onClose}>
                     <div className="flex-shrink-0 flex justify-between items-center mb-4">
-                         <h3 className="text-lg font-bold">Add "{recipe.name}" to your plan</h3>
+                        <h3 className="text-2xl font-bold">Filter Recipes</h3>
+                        <button onClick={onClose} className="text-gray-500 hover:text-gray-800"><XIcon /></button>
+                    </div>
+                    <div className="flex-grow overflow-y-auto pr-4 space-y-6">
+                        {Object.entries(tagGroups).map(([groupName, tags]) => (
+                            <div key={groupName}>
+                                <h4 className="font-bold text-lg text-gray-800 mb-2 border-b pb-1">{groupName}</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    {tags.map(tag => {
+                                        const isActive = activeFilters.includes(tag);
+                                        return (
+                                            <button 
+                                                key={tag} 
+                                                onClick={() => toggleFilter(tag)}
+                                                className={`px-3 py-1.5 text-sm font-semibold rounded-full border-2 transition-colors ${isActive ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-gray-300 hover:border-green-400'}`}
+                                            >
+                                                {tag}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="flex-shrink-0 mt-6 flex justify-end">
+                        <button onClick={onClose} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg">Done</button>
+                    </div>
+                </Modal>
+            );
+        }
+
+        // --- Add to Plan Modal with full D&D and item limits ---
+        function AddToPlanModal({ recipe, onClose, mealPlan, userId }) {
+            const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            const mealTypes = ["Breakfast", "Lunch", "Dinner"];
+            const get = (obj, path, def) => path.split('.').reduce((o, p) => (o && o[p] !== undefined) ? o[p] : def, obj);
+            
+            const handleAddRecipe = async (day, mealType, recipeId) => {
+                const planRef = db.collection("users").doc(userId).collection("data").doc("mealPlan");
+                const fieldPath = `${day}.${mealType}`;
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(planRef);
+                        const currentPlan = doc.data() || {};
+                        const currentMeals = get(currentPlan, fieldPath, []);
+                        if (currentMeals.length < 4) {
+                            const newMeals = [...currentMeals, recipeId];
+                            transaction.set(planRef, { [day]: { ...(currentPlan[day] || {}), [mealType]: newMeals } }, { merge: true });
+                        }
+                    });
+                } catch (e) { console.error("Modal add recipe transaction failed:", e); }
+            };
+
+            const handleRemoveRecipe = async (day, mealType, recipeIdToRemove, indexToRemove) => {
+                const planRef = db.collection("users").doc(userId).collection("data").doc("mealPlan");
+                const fieldPath = `${day}.${mealType}`;
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(planRef);
+                        if (!doc.exists) return;
+                        const currentPlan = doc.data();
+                        const currentMeals = get(currentPlan, fieldPath, []);
+                        if (currentMeals[indexToRemove] === recipeIdToRemove) {
+                            const newMeals = currentMeals.filter((_, index) => index !== indexToRemove);
+                            transaction.set(planRef, { [day]: { ...(currentPlan[day] || {}), [mealType]: newMeals } }, { merge: true });
+                        }
+                    });
+                } catch (e) { console.error("Modal remove recipe transaction failed:", e); }
+            };
+
+            const handleDragStart = (e, dragData) => {
+                e.dataTransfer.setData("application/json", JSON.stringify(dragData));
+                e.currentTarget.classList.add('dragging');
+            };
+            
+            const handleDragEnd = (e) => {
+                 e.currentTarget.classList.remove('dragging');
+            };
+
+            const handleDrop = async (e, targetDay, targetMealType) => {
+                e.preventDefault();
+                e.currentTarget.classList.remove('drag-over-slot');
+                const jsonData = e.dataTransfer.getData("application/json");
+                if (!jsonData) return;
+                
+                const sourceData = JSON.parse(jsonData);
+                if (sourceData.type !== 'rearrange') return;
+
+                const { recipeId, sourceDay, sourceMealType, sourceIndex } = sourceData;
+                if (sourceDay === targetDay && sourceMealType === targetMealType) return;
+
+                const planRef = db.collection("users").doc(userId).collection("data").doc("mealPlan");
+                
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(planRef);
+                        const currentPlan = doc.data() || {};
+                        const sourceMeals = get(currentPlan, `${sourceDay}.${sourceMealType}`, []);
+                        const targetMeals = get(currentPlan, `${targetDay}.${targetMealType}`, []);
+
+                        if (targetMeals.length >= 4 || sourceMeals[sourceIndex] !== recipeId) {
+                            return;
+                        }
+
+                        const [movedRecipe] = sourceMeals.splice(sourceIndex, 1);
+                        targetMeals.push(movedRecipe);
+                        
+                        const updatePayload = {};
+                        if (sourceDay === targetDay) {
+                            // [THE FIX] When moving within the same day, create a single update object for that day
+                            // that includes the changes to BOTH the source and target meal slots.
+                            updatePayload[sourceDay] = {
+                                ...(currentPlan[sourceDay] || {}),
+                                [sourceMealType]: sourceMeals,
+                                [targetMealType]: targetMeals
+                            };
+                        } else {
+                            // When moving between different days, create separate update objects for each day.
+                            updatePayload[sourceDay] = { ...(currentPlan[sourceDay] || {}), [sourceMealType]: sourceMeals };
+                            updatePayload[targetDay] = { ...(currentPlan[targetDay] || {}), [targetMealType]: targetMeals };
+                        }
+                        
+                        transaction.set(planRef, updatePayload, { merge: true });
+                    });
+                } catch (e) { console.error("Modal drag-drop transaction failed:", e); }
+            };
+
+            const handleDragOver = (e) => e.preventDefault();
+            const handleDragEnter = (e) => e.currentTarget.classList.add('drag-over-slot');
+            const handleDragLeave = (e) => e.currentTarget.classList.remove('drag-over-slot');
+            
+            return (
+                <Modal onClose={onClose}>
+                    <div className="flex-shrink-0 flex justify-between items-center mb-4">
+                         <h3 className="text-lg font-bold">Plan "{recipe.name}"</h3>
                          <button onClick={onClose} className="text-gray-500 hover:text-gray-800"><XIcon /></button>
                     </div>
-                    <p className="flex-shrink-0 text-sm text-gray-600 mb-4">Click an empty slot to add this meal, or drag and drop meals to swap them.</p>
+                    <p className="flex-shrink-0 text-sm text-gray-600 mb-4">Click a slot to add, or drag meals to rearrange. Max 4 per slot.</p>
                     <div className="flex-grow overflow-y-auto pr-2">
                         <div className="space-y-4">
                             {days.map(day => (
@@ -18308,36 +18482,51 @@
                                     <p className="font-bold text-md text-gray-700">{day}</p>
                                     <div className="grid grid-cols-3 gap-2 mt-1">
                                         {mealTypes.map(mealType => {
-                                            const existingRecipeId = localPlan[day]?.[mealType];
-                                            const existingRecipe = existingRecipeId ? allRecipes.find(r => r.id === existingRecipeId) : null;
-                                            const isBeingDragged = draggedItem?.day === day && draggedItem?.mealType === mealType;
+                                            const recipeIds = mealPlan[day]?.[mealType] || [];
+                                            const recipesInSlot = recipeIds.map((id, index) => ({
+                                                ...allRecipes.find(r => r.id === id),
+                                                instanceKey: `${day}-${mealType}-${id}-${index}`
+                                            })).filter(r => r.id);
+                                            const isFull = recipesInSlot.length >= 4;
 
                                             return (
                                                 <div
-                                                    key={mealType}
-                                                    onClick={() => !existingRecipe && handleSelect(day, mealType)}
-                                                    onDragOver={handleDragOver}
+                                                    key={`${day}-${mealType}`}
+                                                    onClick={() => !isFull && handleAddRecipe(day, mealType, recipe.id)}
                                                     onDrop={(e) => handleDrop(e, day, mealType)}
-                                                    draggable={!!existingRecipe}
-                                                    onDragStart={(e) => existingRecipe && handleDragStart(e, day, mealType, existingRecipe.id)}
-                                                    onDragEnd={() => setDraggedItem(null)}
-                                                    className={`w-full px-2 py-1.5 rounded-lg transition-all text-sm h-20 flex flex-col justify-center items-center text-center relative group 
-                                                        ${existingRecipe ? 'bg-green-100 text-green-800 cursor-grab' : 'bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer'}
-                                                        ${isBeingDragged ? 'dragging' : ''}
+                                                    onDragOver={handleDragOver}
+                                                    onDragEnter={handleDragEnter}
+                                                    onDragLeave={handleDragLeave}
+                                                    className={`w-full p-2 rounded-lg transition-all text-sm min-h-[8rem] flex flex-col justify-start items-center text-center relative group 
+                                                        ${isFull ? 'bg-red-100 text-red-800 cursor-not-allowed' : 'bg-gray-100 text-gray-700 hover:bg-green-100 cursor-pointer'}
                                                     `}
                                                 >
-                                                    <span className="font-semibold">{mealType}</span>
-                                                    {existingRecipe ? (
-                                                        <div className="w-full">
-                                                            <p className="text-xs mt-1 truncate w-full" title={existingRecipe.name}>{existingRecipe.name}</p>
-                                                            <button 
-                                                                onClick={(e) => { e.stopPropagation(); handleRemove(day, mealType); }} 
-                                                                className="absolute top-0 right-0 m-1 text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                                                    <span className={`font-semibold ${isFull ? 'text-red-900' : ''}`}>{mealType}</span>
+                                                    <div className="text-xs mt-1 w-full space-y-0.5 flex-grow">
+                                                        {recipesInSlot.map((r, index) => (
+                                                            <div 
+                                                                key={r.instanceKey} 
+                                                                draggable="true"
+                                                                onDragStart={(e) => handleDragStart(e, { type: 'rearrange', recipeId: r.id, sourceDay: day, sourceMealType: mealType, sourceIndex: index })}
+                                                                onDragEnd={handleDragEnd}
+                                                                className="flex items-center justify-between w-full text-left bg-white/80 p-1 rounded-sm group/item cursor-move"
                                                             >
-                                                                <XIcon />
-                                                            </button>
-                                                        </div>
-                                                    ) : <span className="text-xs mt-1 text-gray-400">Empty</span>}
+                                                                <p className="truncate text-xs flex-grow" title={r.name}>{r.name}</p>
+                                                                <button 
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleRemoveRecipe(day, mealType, r.id, index);
+                                                                    }}
+                                                                    className="ml-1 text-red-400 hover:text-red-600 flex-shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                                                                >
+                                                                    <MiniXIcon />
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    {isFull && (
+                                                        <div className="w-full text-center text-xs font-bold text-red-600 py-1">SLOT FULL</div>
+                                                    )}
                                                 </div>
                                             );
                                         })}
@@ -18353,8 +18542,7 @@
             );
         }
 
-
-        // --- Shopping List Tab ---
+        // --- Shopping List Tab with Robust Update ---
         function ShoppingList({ userId, shoppingList }) {
             const [newItemName, setNewItemName] = React.useState('');
             const [newItemQty, setNewItemQty] = React.useState('1');
@@ -18362,25 +18550,45 @@
             
             const togglePurchased = async (item) => {
                 const itemRef = db.collection("users").doc(userId).collection("shoppingList").doc(item.id);
-                await itemRef.update({ purchased: !item.purchased });
+                await itemRef.set({ purchased: !item.purchased }, { merge: true });
             };
 
             const handleAddItem = async (e) => {
                 e.preventDefault();
                 if (!newItemName.trim()) return;
+
                 const docId = `${newItemName.toLowerCase().trim()}-${newItemUnit.toLowerCase().trim()}`.replace(/[^a-zA-Z0-9-]/g, '_');
                 const itemRef = db.collection("users").doc(userId).collection("shoppingList").doc(docId);
-                await itemRef.set({
-                    name: newItemName,
-                    quantity: parseFloat(newItemQty) || 1,
-                    unit: newItemUnit,
-                    purchased: false,
-                    category: 'Miscellaneous',
-                    fromRecipe: false
-                });
-                setNewItemName('');
-                setNewItemQty('1');
-                setNewItemUnit('pc');
+                const quantityToAdd = parseFloat(newItemQty) || 1;
+
+                try {
+                    await db.runTransaction(async (transaction) => {
+                        const doc = await transaction.get(itemRef);
+                        if (!doc.exists) {
+                            transaction.set(itemRef, {
+                                name: newItemName.trim(),
+                                quantity: quantityToAdd,
+                                unit: newItemUnit,
+                                purchased: false,
+                                category: 'Miscellaneous',
+                                fromRecipe: false
+                            });
+                        } else {
+                            const existingData = doc.data();
+                            const newQuantity = (existingData.quantity || 0) + quantityToAdd;
+                            transaction.update(itemRef, { 
+                                quantity: newQuantity,
+                                fromRecipe: false
+                            });
+                        }
+                    });
+
+                    setNewItemName('');
+                    setNewItemQty('1');
+                    setNewItemUnit('pc');
+                } catch (error) {
+                    console.error("Failed to add custom item:", error);
+                }
             };
             
             const deleteCustomItem = async (itemId) => {
@@ -18402,7 +18610,6 @@
                         orderedGroupedList[category] = grouped[category];
                     }
                 });
-                // Add any categories that weren't in the predefined order
                 Object.keys(grouped).forEach(category => {
                     if (!orderedGroupedList[category]) {
                          orderedGroupedList[category] = grouped[category];
@@ -18470,7 +18677,7 @@
             };
 
             React.useEffect(() => {
-                if (timer === null || timer <= 0) {
+                if (timer === null || timer < 0) {
                     setTimer(null);
                     return;
                 }
@@ -18481,67 +18688,30 @@
             }, [timer, timerKey]);
 
             const parseInstruction = (instruction) => {
-                // Regex to find number-based times (e.g., "5 minutes", "1-2 hours") and word-based times (e.g., "an hour", "a few seconds")
-                const timeRegex = /(?:(\d+(?:[.-]\d+)?)|(a|an|one|two|three|four|five|a few))\s*(?:more|extra)?\s*(seconds?|minutes?|hours?)/gi;
-
+                const timeRegex = /(?:(\d+(?:[.-]\d+)?)|(a|an|one|two|three|four|five|six|seven|eight|nine|ten|a few))\s*(?:more|extra)?\s*(seconds?|minutes?|hours?)/gi;
                 const parts = [];
                 let lastIndex = 0;
                 let match;
-
-                const numberWords = {
-                    'a': 1, 'an': 1, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'a few': 3,
-                };
+                const numberWords = { 'a': 1, 'an': 1, 'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10, 'a few': 3 };
 
                 while ((match = timeRegex.exec(instruction)) !== null) {
-                    // Add text before the match
-                    if (match.index > lastIndex) {
-                        parts.push(instruction.substring(lastIndex, match.index));
-                    }
-
+                    if (match.index > lastIndex) parts.push(instruction.substring(lastIndex, match.index));
                     const fullMatchText = match[0];
-                    const numberString = match[1]; // e.g., "5" or "1-2"
-                    const wordString = match[2];   // e.g., "a"
-                    const unit = match[3].toLowerCase();
-
-                    let value = 0;
-
-                    if (numberString) {
-                        // It's a digit. Handle ranges like "1-2". We'll take the first number.
-                        value = parseFloat(numberString.split(/[-.]/)[0]);
-                    } else if (wordString) {
-                        // It's a word.
-                        value = numberWords[wordString.toLowerCase()];
-                    }
-
+                    let value = match[1] ? parseFloat(match[1].split(/[-.]/)[0]) : (match[2] ? numberWords[match[2].toLowerCase()] : 0);
                     if (value > 0) {
-                        let seconds = 0;
-                        if (unit.startsWith('hour')) {
-                            seconds = value * 3600;
-                        } else if (unit.startsWith('minute')) {
-                            seconds = value * 60;
-                        } else { // seconds
-                            seconds = value;
-                        }
-                        
-                        // Push the button component
+                        let seconds = match[3].toLowerCase().startsWith('hour') ? value * 3600 : (match[3].toLowerCase().startsWith('minute') ? value * 60 : value);
                         parts.push(<button key={lastIndex} onClick={() => startTimerInSeconds(seconds)} className="bg-green-200 text-green-800 font-bold py-1 px-2 rounded-lg mx-1 inline-block">{fullMatchText}</button>);
                     } else {
-                        // If for some reason we couldn't parse a value, just push the text
                         parts.push(fullMatchText);
                     }
-
                     lastIndex = timeRegex.lastIndex;
                 }
-
-                // Add any remaining text after the last match
-                if (lastIndex < instruction.length) {
-                    parts.push(instruction.substring(lastIndex));
-                }
-
+                if (lastIndex < instruction.length) parts.push(instruction.substring(lastIndex));
                 return parts.length > 0 ? <>{parts}</> : instruction;
             };
             
             const currentInstructions = Array.isArray(recipe.instructions) ? recipe.instructions : [];
+            const timerProgress = timerDuration > 0 ? (timer / timerDuration) * 100 : 0;
 
             return (
                 <div className="fixed inset-0 bg-gray-50 flex flex-col p-4 sm:p-8 z-50">
@@ -18553,7 +18723,7 @@
                     {timer !== null && (
                         <div className="w-full mb-4">
                             <div className="w-full bg-gray-200 rounded-full h-4">
-                                <div key={timerKey} className="bg-green-500 h-4 rounded-full" style={timer > 0 ? { animation: `countdown ${timerDuration}s linear forwards` } : {width: '0%'}}></div>
+                                <div className="bg-green-500 h-4 rounded-full transition-all duration-1000 linear" style={{ width: `${timerProgress}%` }}></div>
                             </div>
                             <p className="text-center font-bold text-lg mt-1">{Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}</p>
                         </div>
@@ -18568,18 +18738,63 @@
                         <button onClick={() => setStep(s => Math.max(0, s - 1))} disabled={step === 0} className="bg-white shadow-lg text-gray-800 font-bold py-3 px-8 rounded-lg disabled:opacity-50">Previous</button>
                         <button onClick={() => setStep(s => Math.min(currentInstructions.length - 1, s + 1))} disabled={step >= currentInstructions.length - 1} className="bg-green-500 shadow-lg text-white font-bold py-3 px-8 rounded-lg disabled:opacity-50">Next</button>
                     </footer>
-                    
-                    <style>{`
-                        @keyframes countdown {
-                            from { width: 100%; }
-                            to { width: 0%; }
-                        }
-                    `}</style>
                 </div>
             );
         }
 
-        // --- This is the crucial part that connects React to the HTML ---
+        // --- Footer and Legal Modal Components ---
+        function Footer({ onShowLegal }) {
+            return (
+                <footer className="w-full bg-gray-100 border-t border-gray-200 p-4 mt-8">
+                    <div className="container mx-auto text-center text-gray-500 text-sm">
+                        <p>© 2024 EatDotApp Inc. All Rights Reserved.</p>
+                        <button onClick={onShowLegal} className="text-green-600 hover:underline mt-1">Legal & About</button>
+                    </div>
+                </footer>
+            );
+        }
+
+        function LegalModal({ onClose }) {
+            const Section = ({ title, children }) => (
+                <div className="mb-6">
+                    <h4 className="text-xl font-bold text-gray-800 mb-2 border-b pb-1">{title}</h4>
+                    <div className="space-y-3 text-gray-600 text-sm">{children}</div>
+                </div>
+            );
+            return (
+                <Modal onClose={onClose}>
+                    <div className="flex-shrink-0 flex justify-between items-center mb-4">
+                        <h3 className="text-2xl font-bold">Legal & About</h3>
+                        <button onClick={onClose} className="text-gray-500 hover:text-gray-800"><XIcon /></button>
+                    </div>
+                    <div className="flex-grow overflow-y-auto pr-4 text-sm">
+                        <Section title="Intellectual Property Rights">
+                            <p><strong>Copyright Ownership:</strong> All original content featured on the EatDotApp Service, including but not limited to text, graphics, logos, icons, images, data compilations, recipe data, nutritional algorithms, user interface designs, and the underlying software code, is the exclusive property of EatDotApp Inc. or its content suppliers and is protected by United States and international copyright laws.</p>
+                            <p><strong>Trademark Claims:</strong> The name "EatDotApp," our logos, slogans (e.g., "Plan your meals, simplify your life."), and the unique trade dress of our Service are trademarks of EatDotApp Inc. Unauthorized use is strictly prohibited.</p>
+                            <p><strong>Trade Secret Protection:</strong> All non-public, proprietary systems, methodologies, and business information related to the EatDotApp Service are valuable trade secrets of EatDotApp Inc. This includes our proprietary recipe analysis algorithms, meal plan generation logic, and shopping list aggregation system. Unauthorized use, disclosure, or reverse engineering of these trade secrets is strictly prohibited.</p>
+                        </Section>
+                        <Section title="Terms of Service (IP Clauses)">
+                             <p><strong>Intellectual Property:</strong> All technology, algorithms, code, and content related to the EatDotApp website and mobile applications are the exclusive property of EatDotApp Inc. and its licensors. Your use of the Service does not grant you any ownership rights to our intellectual property.</p>
+                             <p><strong>Use Limitations:</strong> You agree not to copy, modify, create derivative works of, reverse engineer, decompile, or otherwise attempt to extract the source code of the Service or any part thereof, unless this is expressly permitted or required by law, or unless you have been specifically told that you may do so by EatDotApp Inc., in writing.</p>
+                        </Section>
+                        <Section title="About / Credits">
+                            <p><strong>Our Technology:</strong> At EatDotApp, we've poured countless hours into developing a seamless and intelligent meal planning experience. Our proprietary technology is the heart of our service.</p>
+                            <ul className="list-disc list-inside space-y-2 mt-2">
+                                <li><strong>Original Meal Planning Algorithm:</strong> The logic that powers our meal planner, shopping list generation, and nutritional data analysis is an original creation of the EatDotApp team.</li>
+                                <li><strong>Unique UI/UX Design:</strong> The visual design, layout, and user flow of our planner, "Cook Mode," and recipe browser are original works protected by copyright.</li>
+                                <li><strong>Proprietary Database Structure:</strong> The way we organize and relate our extensive recipe and ingredient data is a unique and protected system.</li>
+                            </ul>
+                            <p className="mt-2">All rights to these systems, designs, and algorithms are the exclusive property of EatDotApp Inc. We're proud of the work we've done to make meal planning simpler for you.</p>
+                        </Section>
+                    </div>
+                    <div className="flex-shrink-0 mt-6 flex justify-end">
+                        <button onClick={onClose} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg">Done</button>
+                    </div>
+                </Modal>
+            );
+        }
+
+        // --- Render App ---
         const container = document.getElementById('root');
         const root = ReactDOM.createRoot(container);
         root.render(<App />);
